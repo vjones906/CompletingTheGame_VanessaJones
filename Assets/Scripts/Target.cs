@@ -6,11 +6,13 @@ public class Target : MonoBehaviour
 {
     private Rigidbody targetRB;
     private EventManager eventManager;
+    public bool isActive;
     [SerializeField] private ParticleSystem expParticle;
 
     // Start is called before the first frame update
     void Start()
     {
+        isActive = true;
         eventManager = GameObject.Find("Event Manager").GetComponent<EventManager>();
         targetRB = GetComponent<Rigidbody>();
         // Randomly select launch location
@@ -32,20 +34,29 @@ public class Target : MonoBehaviour
 
     private void OnMouseDown()
     {
-        Instantiate(expParticle, transform.position, expParticle.transform.rotation);
-        Destroy(gameObject);
-        if(CompareTag("Bad Target"))
+        if (isActive)
         {
-            eventManager.targetDestroyed?.Invoke(-10);
+            Instantiate(expParticle, transform.position, expParticle.transform.rotation);
+            Destroy(gameObject);
+            if (CompareTag("Bad Target"))
+            {
+                eventManager.targetDestroyed?.Invoke(-10);
+            }
+            else if (CompareTag("Good Target"))
+            {
+                eventManager.targetDestroyed?.Invoke(10);
+            }
         }
-        else if(CompareTag("Good Target"))
-        {
-            eventManager.targetDestroyed?.Invoke(10);
-        }
+    }
+
+    public void Deactivate()
+    {
+        isActive = false;
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        eventManager.gameOverEvent?.Invoke();
         Destroy(gameObject);
     }
 }
