@@ -9,4 +9,7 @@ public class EventManager : MonoBehaviour
     public TargetDestroyed targetDestroyed;
 
     public UnityEvent gameOverEvent;
+
+    [System.Serializable] public class StartGameEvent : UnityEvent<int> { }
+    public StartGameEvent startGameEvent;
 }
